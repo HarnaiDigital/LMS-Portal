@@ -18,6 +18,12 @@ except ImportError:
     print("Note: Install dnspython for email domain verification: pip install dnspython")
 
 app = Flask(__name__)
+
+# Fix for Railway - ensure templates are found
+app = Flask(__name__, template_folder='templates', static_folder='static')
+
+# Create static folder if not exists
+os.makedirs('static', exist_ok=True)
 app.secret_key = 'your-secret-key-here-change-in-production'
 
 # File upload configuration
