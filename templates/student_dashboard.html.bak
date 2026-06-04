@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Welcome, {{ session.user_name }}!</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">My Enrolled Courses</h5>
+            </div>
+            <div class="card-body">
+                {% if enrolled_courses %}
+                    <div class="row">
+                        {% for course in enrolled_courses %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card dashboard-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ course.title }}</h5>
+                                        <p class="card-text">{{ course.description[:100] }}</p>
+                                        <p class="text-muted">Teacher: {{ course.teacher_name }}</p>
+                                        <a href="{{ url_for('view_course', course_id=course.id) }}" class="btn btn-sm btn-primary">View Course</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>You are not enrolled in any courses yet.</p>
+                    <a href="{{ url_for('browse_courses') }}" class="btn btn-primary">Browse Courses</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Pending Assignments</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_assignments %}
+                    <ul class="list-group">
+                        {% for assignment in pending_assignments %}
+                            <li class="list-group-item">
+                                <strong>{{ assignment.title }}</strong> - {{ assignment.course_title }}
+                                <a href="{{ url_for('view_assignment', assignment_id=assignment.id) }}" class="btn btn-sm btn-outline-primary float-end">Submit</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No pending assignments! Great job!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">🔔 Notifications</h5>
+            </div>
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                {% if notifications %}
+                    {% for notification in notifications %}
+                        <div class="mb-3 {% if not notification.is_read %}bg-light{% endif %} p-2 rounded">
+                            <strong>{{ notification.title }}</strong>
+                            <p class="small text-muted">{{ notification.created_at[:16] }}</p>
+                            <p class="small">{{ notification.content }}</p>
+                        </div>
+                        {% if not loop.last %}<hr>{% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>No new notifications.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Latest Announcements</h5>
+            </div>
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                {% if announcements %}
+                    {% for announcement in announcements %}
+                        {% if announcement.posted_by_role != 'admin' and announcement.posted_by_name|lower != 'admin' %}
+                            <div class="mb-3">
+                                <strong>{{ announcement.title }}</strong>
+                                <p class="small text-muted">{{ announcement.posted_at[:16] }} by {{ announcement.posted_by_name }}</p>
+                                <p>{{ announcement.content[:100] }}...</p>
+                            </div>
+                            {% if not loop.last %}<hr>{% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>No announcements yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

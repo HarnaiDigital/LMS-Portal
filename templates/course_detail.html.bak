@@ -1,0 +1,149 @@
+<!-- templates/course_detail.html -->
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block content %}
+<h2>{{ course.title }}</h2>
+<p class="text-muted">Teacher: {{ course.teacher_name }}</p>
+<p>{{ course.description }}</p>
+
+{% if session.role == 'student' and not is_enrolled %}
+    <a href="{{ url_for('enroll_course', course_id=course.id) }}" class="btn btn-success">Enroll in this Course</a>
+{% endif %}
+
+<ul class="nav nav-tabs mt-4" id="courseTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button" role="tab">Materials</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab">Assignments</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="quizzes-tab" data-bs-toggle="tab" data-bs-target="#quizzes" type="button" role="tab">Quizzes</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="discussions-tab" data-bs-toggle="tab" data-bs-target="#discussions" type="button" role="tab">Discussions</button>
+    </li>
+    {% if session.role in ['teacher', 'admin'] %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab">Attendance</button>
+    </li>
+    {% endif %}
+</ul>
+
+<div class="tab-content mt-3" id="courseTabContent">
+    <div class="tab-pane fade show active" id="materials" role="tabpanel">
+        <div class="card">
+            <div class="card-body">
+                {% if session.role in ['teacher', 'admin'] %}
+                    <form method="POST" action="{{ url_for('add_material', course_id=course.id) }}" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" name="title" class="form-control" placeholder="Material Title" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" name="content" class="form-control" placeholder="Content / Link" required>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">Add</button>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+                {% if materials %}
+                    <ul class="list-group">
+                        {% for material in materials %}
+                            <li class="list-group-item">
+                                <strong>{{ material.title }}</strong>
+                                <p>{{ material.content }}</p>
+                                <small class="text-muted">Added: {{ material.uploaded_at }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No study materials uploaded yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="assignments" role="tabpanel">
+        <div class="card">
+            <div class="card-body">
+                {% if session.role in ['teacher', 'admin'] %}
+                    <a href="{{ url_for('create_assignment', course_id=course.id) }}" class="btn btn-primary mb-3">Create Assignment</a>
+                {% endif %}
+                {% if assignments %}
+                    <ul class="list-group">
+                        {% for assignment in assignments %}
+                            <li class="list-group-item">
+                                <strong>{{ assignment.title }}</strong>
+                                <p>{{ assignment.description[:100] }}</p>
+                                <small>Due: {{ assignment.due_date or 'No deadline' }} | Max Points: {{ assignment.max_points }}</small>
+                                <a href="{{ url_for('view_assignment', assignment_id=assignment.id) }}" class="btn btn-sm btn-outline-primary float-end">View</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No assignments created yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="quizzes" role="tabpanel">
+        <div class="card">
+            <div class="card-body">
+                {% if session.role in ['teacher', 'admin'] %}
+                    <a href="{{ url_for('create_quiz', course_id=course.id) }}" class="btn btn-primary mb-3">Create Quiz</a>
+                {% endif %}
+                {% if quizzes %}
+                    <ul class="list-group">
+                        {% for quiz in quizzes %}
+                            <li class="list-group-item">
+                                <strong>{{ quiz.title }}</strong>
+                                {% if session.role == 'student' %}
+                                    <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-success float-end">Take Quiz</a>
+                                {% else %}
+                                    <a href="#" class="btn btn-sm btn-info float-end">View Results</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No quizzes created yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="discussions" role="tabpanel">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_discussion', course_id=course.id) }}" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="message" class="form-control" placeholder="Start a discussion..." required>
+                        <button type="submit" class="btn btn-primary">Post</button>
+                    </div>
+                </form>
+                {% for discussion in discussions %}
+                    <div class="border-bottom mb-3 pb-2">
+                        <strong>{{ discussion.user_name }}</strong>
+                        <small class="text-muted">{{ discussion.created_at }}</small>
+                        <p>{{ discussion.message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    {% if session.role in ['teacher', 'admin'] %}
+    <div class="tab-pane fade" id="attendance" role="tabpanel">
+        <div class="card">
+            <div class="card-body">
+                <a href="{{ url_for('mark_attendance', course_id=course.id) }}" class="btn btn-info">Mark Attendance</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

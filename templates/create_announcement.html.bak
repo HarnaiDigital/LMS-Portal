@@ -1,0 +1,36 @@
+<!-- templates/create_announcement.html -->
+{% extends "base.html" %}
+{% block title %}Create Announcement{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Post Announcement</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="audience" class="form-label">Audience</label>
+                        <select class="form-control" id="audience" name="audience" required>
+                            <option value="teachers">Teachers Only</option>
+                            <option value="all">All Users (Students & Teachers)</option>
+                        </select>
+                        <small class="text-muted">Select who should see this announcement</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Announcement</button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

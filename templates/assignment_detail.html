@@ -1,0 +1,81 @@
+<!-- templates/assignment_detail.html -->
+{% extends "base.html" %}
+{% block title %}{{ assignment.title }}{% endblock %}
+{% block content %}
+<h2>{{ assignment.title }}</h2>
+<p><strong>Course:</strong> {{ assignment.course_title }}</p>
+<p>{{ assignment.description }}</p>
+<p><strong>Due Date:</strong> {{ assignment.due_date or 'No deadline' }}</p>
+<p><strong>Max Points:</strong> {{ assignment.max_points }}</p>
+
+{% if session.role == 'student' %}
+    <div class="card mt-3">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Submit Your Work</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('submit_assignment', assignment_id=assignment.id) }}" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="submission_text" class="form-label">Your Submission Text</label>
+                    <textarea class="form-control" id="submission_text" name="submission_text" rows="5">{{ submission.submission_text if submission else '' }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="assignment_file" class="form-label">Upload File (Optional)</label>
+                    <input type="file" class="form-control" id="assignment_file" name="assignment_file" accept=".pdf,.doc,.docx,.txt,.zip,.rar,.jpg,.png,.pptx,.xlsx">
+                    <small class="text-muted">Allowed formats: PDF, DOC, DOCX, TXT, ZIP, RAR, JPG, PNG, PPTX, XLSX (Max 50MB)</small>
+                    {% if submission and submission.file_path %}
+                        <div class="mt-2">
+                            <strong>Previously uploaded:</strong>
+                            <a href="{{ url_for('download_file', filename=submission.file_path) }}" target="_blank">Download Submitted File</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Assignment</button>
+            </form>
+            {% if submission and submission.grade is not none %}
+                <div class="alert alert-success mt-3">
+                    <strong>Your Grade: {{ submission.grade }}/{{ assignment.max_points }}</strong><br>
+                    Feedback: {{ submission.feedback or 'No feedback provided' }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% if session.role in ['teacher', 'admin'] and submissions %}
+    <div class="card mt-3">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Student Submissions</h5>
+        </div>
+        <div class="card-body">
+            {% for sub in submissions %}
+                <div class="border-bottom mb-3 pb-3">
+                    <strong>{{ sub.student_name }}</strong> - Submitted: {{ sub.submitted_at }}
+                    <p>{{ sub.submission_text }}</p>
+                    {% if sub.file_path %}
+                        <p><strong>Attachment:</strong> <a href="{{ url_for('download_file', filename=sub.file_path) }}" target="_blank">Download File</a></p>
+                    {% endif %}
+                    {% if sub.grade is not none %}
+                        <p><strong>Grade: {{ sub.grade }}/{{ assignment.max_points }}</strong></p>
+                        <p>Feedback: {{ sub.feedback or 'None' }}</p>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('grade_submission', submission_id=sub.id) }}" class="mt-2">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="number" name="grade" class="form-control" placeholder="Grade (0-100)" min="0" max="100" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="feedback" class="form-control" placeholder="Feedback">
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-success w-100">Submit Grade</button>
+                                </div>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

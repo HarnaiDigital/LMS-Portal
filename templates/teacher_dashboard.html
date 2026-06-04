@@ -1,0 +1,75 @@
+<!-- templates/teacher_dashboard.html -->
+{% extends "base.html" %}
+{% block title %}Teacher Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Teacher Dashboard - {{ session.user_name }}</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">My Courses</h5>
+            </div>
+            <div class="card-body">
+                {% if courses %}
+                    <ul class="list-group">
+                        {% for course in courses %}
+                            <li class="list-group-item">
+                                <strong>{{ course.title }}</strong>
+                                <a href="{{ url_for('view_course', course_id=course.id) }}" class="btn btn-sm btn-primary float-end">Manage</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>You haven't created any courses yet.</p>
+                    <a href="{{ url_for('create_course') }}" class="btn btn-primary">Create First Course</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Recent Submissions to Grade</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_submissions %}
+                    <ul class="list-group">
+                        {% for submission in recent_submissions %}
+                            <li class="list-group-item">
+                                <strong>{{ submission.student_name }}</strong> - {{ submission.assignment_title }}
+                                {% if submission.file_path %}
+                                    <span class="badge bg-info">Has File</span>
+                                {% endif %}
+                                <a href="{{ url_for('view_assignment', assignment_id=submission.assignment_id) }}" class="btn btn-sm btn-outline-primary float-end">Grade</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No pending submissions to grade.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">📢 Teacher Announcements</h5>
+            </div>
+            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                {% if teacher_announcements %}
+                    {% for announcement in teacher_announcements %}
+                        <div class="mb-3 p-2 border-bottom">
+                            <strong>{{ announcement.title }}</strong>
+                            <p class="small text-muted">{{ announcement.posted_at[:16] }} by {{ announcement.posted_by_name }}</p>
+                            <p>{{ announcement.content }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No announcements yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

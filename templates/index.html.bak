@@ -1,0 +1,50 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 text-center">
+        <div class="card bg-dark text-white">
+            <div class="card-body p-5">
+                <h1 class="display-4">Welcome to LMS Portal</h1>
+                <p class="lead">Your complete online Learning Management System for managing courses, assignments, quizzes, and more.</p>
+                <hr class="my-4">
+                <p>Join our platform to enhance your learning experience or manage your courses effectively.</p>
+                {% if not session.user_id %}
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Get Started</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Login</a>
+                {% else %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>📚 Courses</h3>
+                <p>Access course materials, lecture notes, and resources anytime.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>📝 Assignments</h3>
+                <p>Submit assignments online and track your grades.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>📊 Analytics</h3>
+                <p>Monitor your performance with detailed progress reports.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

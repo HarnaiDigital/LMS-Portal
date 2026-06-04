@@ -1,0 +1,81 @@
+<!-- templates/create_quiz.html -->
+{% extends "base.html" %}
+{% block title %}Create Quiz{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Create Quiz</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="quizForm">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Quiz Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="total_points" class="form-label">Total Points</label>
+                        <input type="number" class="form-control" id="total_points" name="total_points" value="100">
+                    </div>
+                    
+                    <h5>Questions</h5>
+                    <div id="questions-container">
+                        <div class="question-item card mb-3 p-3">
+                            <div class="mb-2">
+                                <input type="text" name="question_text[]" class="form-control" placeholder="Question Text" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" name="correct_answer[]" class="form-control" placeholder="Correct Answer" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" name="points[]" class="form-control" placeholder="Points" value="10">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-danger remove-question">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="add-question" class="btn btn-secondary mb-3">Add Question</button>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Create Quiz</button>
+                    <a href="{{ url_for('view_course', course_id=course_id) }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('add-question').addEventListener('click', function() {
+        const container = document.getElementById('questions-container');
+        const newQuestion = document.createElement('div');
+        newQuestion.className = 'question-item card mb-3 p-3';
+        newQuestion.innerHTML = `
+            <div class="mb-2">
+                <input type="text" name="question_text[]" class="form-control" placeholder="Question Text" required>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" name="correct_answer[]" class="form-control" placeholder="Correct Answer" required>
+                </div>
+                <div class="col-md-4">
+                    <input type="number" name="points[]" class="form-control" placeholder="Points" value="10">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-question">Remove</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(newQuestion);
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-question')) {
+            e.target.closest('.question-item').remove();
+        }
+    });
+</script>
+{% endblock %}

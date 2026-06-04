@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Create Announcement{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Post Announcement</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('create_announcement') }}">
+                    
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-bold">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter announcement title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="content" class="form-label fw-bold">Content</label>
+                        <textarea class="form-control" id="content" name="content" rows="5" placeholder="Write your announcement details here..." required></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="audience" class="form-label fw-bold">Audience</label>
+                        <select class="form-select" id="audience" name="audience" required>
+                            <option value="" disabled selected>Select who should see this announcement</option>
+                            <option value="teachers">Teachers Only</option>
+                            <option value="students">Students Only</option>
+                        </select>
+                        <div class="form-text text-muted">Select who should see this announcement</div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">Post Announcement</button>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary px-4">Cancel</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

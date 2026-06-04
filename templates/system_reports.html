@@ -1,0 +1,51 @@
+<!-- templates/system_reports.html -->
+{% extends "base.html" %}
+{% block title %}System Reports{% endblock %}
+{% block content %}
+<h2>System Activity Reports</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Course Statistics</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Course</th><th>Enrollments</th><th>Assignments</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in course_stats %}
+                        <tr>
+                            <td>{{ stat.title }}</td>
+                            <td>{{ stat.enrollment_count }}</td>
+                            <td>{{ stat.assignment_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Detailed Activity Log</h5>
+            </div>
+            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                <ul class="list-group">
+                    {% for activity in activities %}
+                        <li class="list-group-item">
+                            <strong>{{ activity.user_name }}</strong> ({{ activity.user_role }})<br>
+                            {{ activity.action }}<br>
+                            <small class="text-muted">{{ activity.timestamp }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

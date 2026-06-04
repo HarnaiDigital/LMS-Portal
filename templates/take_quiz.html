@@ -1,0 +1,30 @@
+<!-- templates/take_quiz.html -->
+{% extends "base.html" %}
+{% block title %}Take Quiz{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ quiz.title }}</h4>
+            </div>
+            <div class="card-body">
+                <p>Course: {{ quiz.course_title }}</p>
+                <p>Total Points: {{ quiz.total_points }}</p>
+                <form method="POST">
+                    {% for question in questions %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6>{{ loop.index }}. {{ question.question_text }} ({{ question.points }} points)</h6>
+                                <input type="text" name="q_{{ question.id }}" class="form-control" placeholder="Your answer" required>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-success">Submit Quiz</button>
+                    <a href="{{ url_for('view_course', course_id=quiz.course_id) }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

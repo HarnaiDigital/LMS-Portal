@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Create Course{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h4 class="mb-0"><i class="fas fa-plus-circle"></i> Create New Course</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 
+                    <strong>Note:</strong> This course will only be visible to teachers and students who enroll. 
+                    Students can browse and enroll in available courses.
+                </div>
+                
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Course Title *</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               placeholder="e.g., Advanced Python Programming" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Course Description *</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="4" placeholder="Describe what students will learn..." required></textarea>
+                    </div>
+                    
+                    {% if role == 'admin' %}
+                    <div class="mb-3">
+                        <label for="teacher_id" class="form-label">Assign Teacher *</label>
+                        <select class="form-control" id="teacher_id" name="teacher_id" required>
+                            <option value="">-- Select a Teacher --</option>
+                            {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">
+                                {{ teacher.name }} ({{ teacher.email }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">
+                            <i class="fas fa-chalkboard-user"></i> 
+                            Select which teacher will be responsible for this course
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check-circle"></i> Create Course
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    select.form-control {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+</style>
+{% endblock %}

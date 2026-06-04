@@ -1,0 +1,98 @@
+<!-- templates/student_performance.html -->
+{% extends "base.html" %}
+{% block title %}My Performance{% endblock %}
+{% block content %}
+<h2>My Performance Report</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Assignment Grades</h5>
+            </div>
+            <div class="card-body">
+                {% if assignment_grades %}
+                    <table class="table table-sm">
+                        <thead>
+                            <tr><th>Assignment</th><th>Course</th><th>Grade</th><th>Percentage</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for grade in assignment_grades %}
+                            <tr>
+                                <td>{{ grade.assignment_title }}</td>
+                                <td>{{ grade.course_title }}</td>
+                                <td>{{ grade.grade }}/{{ grade.max_points }}</td>
+                                <td>{{ (grade.grade / grade.max_points * 100)|round(1) }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No graded assignments yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Quiz Scores</h5>
+            </div>
+            <div class="card-body">
+                {% if quiz_scores %}
+                    <table class="table table-sm">
+                        <thead>
+                            <tr><th>Quiz</th><th>Course</th><th>Score</th><th>Percentage</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for quiz in quiz_scores %}
+                            <tr>
+                                <td>{{ quiz.quiz_title }}</td>
+                                <td>{{ quiz.course_title }}</td>
+                                <td>{{ quiz.score }}/{{ quiz.total_points }}</td>
+                                <td>{{ (quiz.score / quiz.total_points * 100)|round(1) }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No quiz attempts yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0">Attendance Summary</h5>
+    </div>
+    <div class="card-body">
+        {% if attendance_data %}
+            <table class="table">
+                <thead>
+                    <tr><th>Course</th><th>Present Days</th><th>Total Days</th><th>Attendance %</th></tr>
+                </thead>
+                <tbody>
+                    {% for att in attendance_data %}
+                    <tr>
+                        <td>{{ att.course_title }}</td>
+                        <td>{{ att.present_days }}</td>
+                        <td>{{ att.total_days }}</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar {% if att.percentage >= 75 %}bg-success{% elif att.percentage >= 50 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                     style="width: {{ att.percentage }}%">{{ att.percentage|round(1) }}%</div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No attendance records found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

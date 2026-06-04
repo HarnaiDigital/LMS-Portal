@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Attendance Sheet - {{ course.title }}{% endblock %}
+{% block content %}
+<h2>Attendance Sheet: {{ course.title }}</h2>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Student Name</th>
+                {% for date in dates %}
+                <th>{{ date['date'] }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td><strong>{{ student['name'] }}</strong></td>
+                {% for date in dates %}
+                <td class="{% if attendance_data[student['id']][date['date']] == 'present' %}table-success{% elif attendance_data[student['id']][date['date']] == 'absent' %}table-danger{% endif %}">
+                    {{ attendance_data[student['id']][date['date']]|default('-') }}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<a href="{{ url_for('view_course', course_id=course.id) }}" class="btn btn-secondary">Back to Course</a>
+{% endblock %}
